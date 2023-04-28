@@ -1,22 +1,22 @@
-import logging
-import string
-
-from PyQt5.QtCore import Qt, QTimer, QUrl
-from PyQt5 import QtWidgets, uic
 import asyncio
+import logging
+import os
+import random
 import re
 import sys
-from typing import Optional
 from asyncio import StreamReader, StreamWriter
+from collections import namedtuple
+from typing import Optional
+
+import aiofiles
+import aiohttp
+import magic
+
+from PyQt5 import QtWidgets, uic
+from PyQt5.QtCore import Qt, QTimer, QUrl
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QColor
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtWidgets import QVBoxLayout, QLineEdit, QListView, QFileDialog, QApplication
-from collections import namedtuple
-import aiofiles
-import aiohttp
-import os
-import random
-import magic
 
 
 class Ui(QtWidgets.QMainWindow):
@@ -227,8 +227,6 @@ class Ui(QtWidgets.QMainWindow):
 
                     self.__last_sent_message = self.sender_message('Incognito', message.decode())
             except UnicodeDecodeError:
-
-
 
                 type_obj = self.magic_obj.from_buffer(data)
                 print(type_obj, re.findall(r'audio|WAVE', type_obj, re.IGNORECASE))
