@@ -190,6 +190,11 @@ class Ui(QtWidgets.QMainWindow):
             pass
 
     def __is_key_alive(self) -> bool:
+        """Scanning key field.
+        There is three possible reactions:
+            1. If key is correct, return True
+            2. If key is not written (field empty) return False
+            3. If key is written but it's incorrect return False and log it"""
         key = self.key_enter_box.text()
         if re.fullmatch(r'[^\s\w]{10}\w{10}', key, re.IGNORECASE):
             return True
@@ -201,11 +206,21 @@ class Ui(QtWidgets.QMainWindow):
         return False
 
     async def __wait_for_key(self) -> None:
+        """Keep GUI window alive, but don't start important handler until key field is empty"""
         while not self.__is_key_alive():
             await asyncio.sleep(0.5)
 
-    async def receive(self):
+    async def receive(self) -> None:
+        """The main purpose of the method is to receive data that has been sent through the network and process it.
+        This method do:
+            1. Receiving data.
+            2. Waiting for the key to decrypt data
+            3. An attempt to decode the received data into a string and evaluate whether the data is empty or not.
+            4. The message is broken into lines, and each line is processed with a QStandardItem and added to the queue.
+            5. If data decoding fails, then the data type is determined and stored in  _files variable.
 
+        NOTE, as GUI has circled angles I decide add some spaces from left side
+        """
         while True:
 
             data = await self.reader.read(1024 * 1024 * 50)  # 50 MB
@@ -217,7 +232,6 @@ class Ui(QtWidgets.QMainWindow):
                     self._safe_msg(message.decode())
                     is_me = True if self.__last_sent_message is None or self.__last_sent_message.sender != 'Incognito' else False
                     sender, color = (self.username, self.my_color) if is_me else (self.others_name, self.others_color)
-                    print(sender, color, len(message), self.__last_sent_message)
                     for idx, line in enumerate(message.splitlines()):
                         line = line.decode()
                         item = QStandardItem(f'{" " * 5}{sender}: ' + line if idx == 0 else line)
@@ -227,21 +241,18 @@ class Ui(QtWidgets.QMainWindow):
 
                     self.__last_sent_message = self.sender_message('Incognito', message.decode())
             except UnicodeDecodeError:
-
                 type_obj = self.magic_obj.from_buffer(data)
-                print(type_obj, re.findall(r'audio|WAVE', type_obj, re.IGNORECASE))
                 if re.findall(r'audio|WAVE', type_obj, re.IGNORECASE):
-                    print('audio sent', self._files)
                     path = os.path.join(os.getcwd(), f'audio/{self.rand_number}.wav')
                     self.media_player.setMedia(QMediaContent(QUrl.fromLocalFile(path)))
                     self.rand_number = random.randint(1, 6)
                     self.media_player.play()
-                elif 'audio' in type_obj:
-                    pass
                 else:
-                    pass
-                    # self._files['FILE'] = data
-                    # self.add_file_item('FILE')
+                    self._files['FILE'] = data
+                    self.add_file_item('FILE')
+            except Exception as unk_err:
+                logging.error('Unexpected error', exc_info=unk_err)
+                #  raise some exppt
 
     async def start(self, app):
         """Connect to 'our' server and start some chatting
