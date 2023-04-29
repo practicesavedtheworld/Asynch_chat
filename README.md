@@ -1,7 +1,12 @@
 # Asynch_chat
-Chat based on client &lt;--> server idea. It mostly made with PyQt5 and asyncio
+Chat based on client &lt;--> server idea.
+
+![Client-server](https://user-images.githubusercontent.com/105741091/235299027-6d475413-069c-405e-add0-515f195b72c4.jpg)
 
 
+ It mostly made with PyQt5 and asyncio
+
+# Start
 
 1. Start Key generator and click Generate Key
 
