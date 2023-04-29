@@ -18,6 +18,8 @@ from PyQt5.QtGui import QStandardItemModel, QStandardItem, QColor
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtWidgets import QVBoxLayout, QLineEdit, QListView, QFileDialog, QApplication
 
+from Exceptions import WrongKeyEntered
+
 
 class Ui(QtWidgets.QMainWindow):
 
@@ -199,10 +201,8 @@ class Ui(QtWidgets.QMainWindow):
         if re.fullmatch(r'[^\s\w]{10}\w{10}', key, re.IGNORECASE):
             return True
         elif len(key) and re.match(r'.+', key):
-            # raise some exception
-            print('raise exp')
-            ...
-        logging.error('wrong key')
+            raise WrongKeyEntered
+        logging.error('Key field empty')
         return False
 
     async def __wait_for_key(self) -> None:
@@ -252,7 +252,7 @@ class Ui(QtWidgets.QMainWindow):
                     self.add_file_item('FILE')
             except Exception as unk_err:
                 logging.error('Unexpected error', exc_info=unk_err)
-                #  raise some exppt
+                raise
 
     async def start(self, app):
         """Connect to 'our' server and start some chatting
