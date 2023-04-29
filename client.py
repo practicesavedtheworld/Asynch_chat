@@ -35,6 +35,7 @@ class Ui(QtWidgets.QMainWindow):
         self._tasks: list[asyncio.Task] = []
         self._files = {}
         self.magic_obj = magic.Magic()
+        self.others_name = 'Incognito'
 
         self.reader: Optional[StreamReader] = None
         self.writer: Optional[StreamWriter] = None
@@ -74,7 +75,6 @@ class Ui(QtWidgets.QMainWindow):
 
         Normally this function is never called, which means that the config.txt file does not exist."""
         self.username = 'Me'
-        self.others_name = 'Incognito'
         self.my_color = 'red'
         self.others_color = 'blue'
 
