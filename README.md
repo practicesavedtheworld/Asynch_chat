@@ -6,6 +6,10 @@ Chat based on client &lt;--> server idea.
 
  It mostly made with PyQt5 and asyncio
 
+# Pre Start 
+<pre><code>$ cd Asynch_chat
+$ pip install -e .</code></pre>
+
 # Start
 
 1. Start Key generator and click Generate Key
