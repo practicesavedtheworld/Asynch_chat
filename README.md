@@ -8,7 +8,7 @@ Chat based on client &lt;--> server idea.
 
 # Pre Start 
 <pre><code>$ cd Asynch_chat
-$ pip install -e .</code></pre>
+$ pip install -r requirements.txt </code></pre>
 
 # Start
 
